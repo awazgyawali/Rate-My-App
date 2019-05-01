@@ -52,7 +52,9 @@ class RateMyApp {
   /// Initializes the plugin (loads base launch date, app launches and whether the dialog should not be opened again).
   Future<void> init() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    baseLaunchDate = DateTime.fromMillisecondsSinceEpoch((preferences.getInt('baseLaunchDate') ?? DateTime.now().millisecondsSinceEpoch));
+    baseLaunchDate = DateTime.fromMillisecondsSinceEpoch(
+        (preferences.getInt('baseLaunchDate') ??
+            DateTime.now().millisecondsSinceEpoch));
     launches = (preferences.getInt('launches') ?? 0) + 1;
     doNotOpenAgain = preferences.getBool('doNotOpenAgain') ?? false;
     await save();
@@ -75,13 +77,20 @@ class RateMyApp {
   }
 
   /// Whether the dialog should be opened.
-  bool get shouldOpenDialog => !doNotOpenAgain && (DateTime.now().millisecondsSinceEpoch - baseLaunchDate.millisecondsSinceEpoch) / (1000 * 60 * 60 * 24) >= minDays && launches >= minLaunches;
+  bool get shouldOpenDialog =>
+      !doNotOpenAgain &&
+      (DateTime.now().millisecondsSinceEpoch -
+                  baseLaunchDate.millisecondsSinceEpoch) /
+              (1000 * 60 * 60 * 24) >=
+          minDays &&
+      launches >= minLaunches;
 
   /// Shows the rate dialog.
   Future<void> showRateDialog(
     BuildContext context, {
     String title = 'Rate this app',
-    String message = 'If you like this app, please take a little bit of your time to review it !\nIt really helps us and it shouldn\'t take you more than one minute.',
+    String message =
+        'If you like this app, please take a little bit of your time to review it !\nIt really helps us and it shouldn\'t take you more than one minute.',
     String rateButton = 'RATE',
     String noButton = 'NO THANKS',
     String laterButton = 'MAYBE LATER',
@@ -89,7 +98,8 @@ class RateMyApp {
     if (Platform.isIOS && await _CHANNEL.invokeMethod('canRequestReview')) {
       return _CHANNEL.invokeMethod('requestReview');
     }
-    return RateMyAppDialog.openDialog(this, context, title, message, rateButton, noButton, laterButton);
+    return RateMyAppDialog.openDialog(
+        this, context, title, message, rateButton, noButton, laterButton);
   }
 }
 
@@ -107,7 +117,15 @@ class RateMyAppDialog extends StatelessWidget {
       );
 
   /// Opens the dialog.
-  static Future<void> openDialog(RateMyApp rateMyApp, BuildContext context, String title, String message, String rateButton, String noButton, String laterButton) async => await showDialog(
+  static Future<void> openDialog(
+          RateMyApp rateMyApp,
+          BuildContext context,
+          String title,
+          String message,
+          String rateButton,
+          String noButton,
+          String laterButton) async =>
+      await showDialog(
         context: context,
         builder: (context) => AlertDialog(
               title: Text(title),
@@ -117,17 +135,25 @@ class RateMyAppDialog extends StatelessWidget {
                   alignment: WrapAlignment.end,
                   children: [
                     FlatButton(
-                      child: Text(rateButton),
+                      child: Text(
+                        rateButton,
+                        style: TextStyle(fontSize: 13.0),
+                      ),
                       onPressed: () {
                         rateMyApp.doNotOpenAgain = true;
                         Navigator.pop(context);
                         return RateMyApp._CHANNEL.invokeMethod('launchStore', {
-                          'appId': Platform.isIOS ? rateMyApp.appStoreIdentifier : rateMyApp.googlePlayIdentifier,
+                          'appId': Platform.isIOS
+                              ? rateMyApp.appStoreIdentifier
+                              : rateMyApp.googlePlayIdentifier,
                         });
                       },
                     ),
                     FlatButton(
-                      child: Text(laterButton),
+                      child: Text(
+                        laterButton,
+                        style: TextStyle(fontSize: 13.0),
+                      ),
                       onPressed: () {
                         rateMyApp.baseLaunchDate.add(Duration(
                           days: rateMyApp.remindDays,
@@ -137,7 +163,10 @@ class RateMyAppDialog extends StatelessWidget {
                       },
                     ),
                     FlatButton(
-                      child: Text(noButton),
+                      child: Text(
+                        noButton,
+                        style: TextStyle(fontSize: 13.0),
+                      ),
                       onPressed: () {
                         rateMyApp.doNotOpenAgain = true;
                         rateMyApp.save().then((v) => Navigator.pop(context));
