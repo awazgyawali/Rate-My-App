@@ -1,11 +1,12 @@
 name: rate_my_app
 description: Allows to kindly ask users to rate your app if custom conditions are met (eg. install time, number of launches, etc...).
-version: 0.3.0
+version: 0.4.0
 author: Adarsh Kumar <adarsh@deligence.com>
 homepage: https://github.com/deligence/Rate-My-App.git
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+#   sdk: ">=2.1.0 <3.0.0"
+    sdk: ">=2.0.0 <=2.1.0-dev.9.4.flutter-f9ebf21297"
 
 dependencies:
   shared_preferences: ^0.4.0
